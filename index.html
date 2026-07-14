@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Aurélys — цветочный бутик</title>
+<meta name="description" content="Aurélys — изысканные букеты ручной работы. Красота в каждом букете." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#17130f;
+    --bg-2:#1e1815;
+    --bg-3:#241d19;
+    --cream:#f2e9de;
+    --cream-dim:#c6b8a9;
+    --rose:#d9a3a8;
+    --rose-soft:#e9c7c9;
+    --panel:#e9dccb;
+    --panel-ink:#3a2f28;
+    --line:rgba(242,233,222,.16);
+    --radius:22px;
+    --maxw:1180px;
+    --serif:"Cormorant",Georgia,serif;
+    --sans:"Jost",-apple-system,Segoe UI,Roboto,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg);
+    color:var(--cream);
+    font-family:var(--sans);
+    font-weight:300;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  img{max-width:100%;display:block}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+
+  /* ---------- placeholder for photos ---------- */
+  .ph{
+    position:relative;
+    background:
+      radial-gradient(120% 90% at 30% 20%, rgba(233,199,201,.55), transparent 60%),
+      radial-gradient(100% 100% at 80% 90%, rgba(150,90,100,.45), transparent 55%),
+      linear-gradient(135deg,#4a3339,#2c2226 60%,#3d2c31);
+    overflow:hidden;
+  }
+  .ph::after{
+    content:attr(data-label);
+    position:absolute;inset:0;
+    display:flex;align-items:center;justify-content:center;
+    font-family:var(--sans);font-weight:300;letter-spacing:.18em;
+    text-transform:uppercase;font-size:11px;
+    color:rgba(242,233,222,.55);
+    text-align:center;padding:12px;
+  }
+
+  /* ---------- header ---------- */
+  header{
+    position:sticky;top:0;z-index:50;
+    background:rgba(23,19,15,.82);
+    backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav{
+    display:grid;grid-template-columns:1fr auto 1fr;align-items:center;
+    padding:18px 24px;max-width:var(--maxw);margin:0 auto;gap:16px;
+  }
+  .nav-left,.nav-right{display:flex;align-items:center;gap:34px}
+  .nav-right{justify-content:flex-end}
+  .nav a.link{
+    font-size:14px;letter-spacing:.14em;text-transform:lowercase;color:var(--cream-dim);
+    transition:color .25s;
+  }
+  .nav a.link:hover{color:var(--cream)}
+  .brand{
+    font-family:var(--serif);font-style:italic;font-weight:500;
+    font-size:30px;letter-spacing:.02em;text-align:center;white-space:nowrap;
+  }
+  .icons{display:flex;gap:20px;align-items:center}
+  .icons svg{width:22px;height:22px;stroke:var(--cream);fill:none;stroke-width:1.4;transition:transform .25s,stroke .25s}
+  .icons a:hover svg{transform:translateY(-2px);stroke:var(--rose-soft)}
+  .burger{display:none;background:none;border:0;cursor:pointer;padding:6px}
+  .burger span{display:block;width:26px;height:1.6px;background:var(--cream);margin:6px 0;transition:.3s}
+
+  /* ---------- hero ---------- */
+  .hero{position:relative;padding:26px 24px 0}
+  .hero-inner{max-width:var(--maxw);margin:0 auto;position:relative}
+  .hero-photo{
+    height:min(78vh,720px);border-radius:var(--radius);
+    background:
+      radial-gradient(90% 80% at 65% 30%, rgba(233,199,201,.8), transparent 60%),
+      radial-gradient(120% 120% at 80% 70%, rgba(200,140,150,.6), transparent 55%),
+      linear-gradient(120deg,#3a2a2f,#5a3f46 55%,#2e2327);
+  }
+  .hero-overlay{
+    position:absolute;inset:0;display:flex;flex-direction:column;
+    justify-content:center;padding:0 clamp(24px,6vw,90px);
+  }
+  .hero h1{
+    font-family:var(--serif);font-weight:300;
+    font-size:clamp(72px,15vw,190px);line-height:.92;
+    letter-spacing:.04em;color:var(--cream);
+    text-shadow:0 6px 40px rgba(0,0,0,.35);
+  }
+  .hero .tagline{
+    font-size:clamp(15px,2vw,20px);letter-spacing:.12em;
+    color:var(--cream);margin-top:10px;margin-bottom:34px;font-weight:300;
+  }
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;
+    font-family:var(--sans);font-weight:400;letter-spacing:.1em;
+    font-size:14px;cursor:pointer;border-radius:999px;
+    padding:15px 34px;transition:all .28s ease;border:1px solid transparent;
+  }
+  .btn-glass{
+    background:rgba(20,15,13,.45);backdrop-filter:blur(6px);
+    border-color:rgba(242,233,222,.4);color:var(--cream);width:max-content;
+  }
+  .btn-glass:hover{background:rgba(20,15,13,.7);border-color:var(--cream)}
+  .btn-solid{background:var(--cream);color:var(--panel-ink)}
+  .btn-solid:hover{background:var(--rose-soft)}
+  .btn-outline{background:transparent;border-color:var(--cream-dim);color:var(--cream)}
+  .btn-outline:hover{border-color:var(--cream);background:rgba(242,233,222,.06)}
+
+  /* ---------- section base ---------- */
+  section{padding:clamp(64px,9vw,120px) 0}
+  .section-title{
+    font-family:var(--serif);font-weight:400;
+    font-size:clamp(42px,7vw,84px);letter-spacing:.06em;
+    color:var(--cream);margin-bottom:48px;text-transform:uppercase;
+  }
+
+  /* ---------- product cards ---------- */
+  .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+  .card{display:flex;flex-direction:column}
+  .card .ph{height:340px;border-radius:16px;margin-bottom:22px}
+  .card h3{
+    font-family:var(--serif);font-weight:500;font-size:26px;
+    letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;
+  }
+  .card p{color:var(--cream-dim);font-size:14px;margin-bottom:20px;min-height:42px}
+  .card-actions{display:flex;gap:12px;margin-top:auto}
+  .card-actions .btn{padding:11px 22px;font-size:13px}
+
+  /* ---------- aesthetics banner ---------- */
+  .aesthetics{
+    position:relative;padding:0;
+    background:
+      linear-gradient(rgba(20,14,13,.35),rgba(20,14,13,.55)),
+      radial-gradient(80% 120% at 20% 30%, rgba(233,199,201,.7), transparent 60%),
+      radial-gradient(90% 120% at 90% 80%, rgba(180,120,130,.6), transparent 55%),
+      linear-gradient(135deg,#4a3238,#2b2124 55%,#412f34);
+  }
+  .aesthetics .band{
+    min-height:230px;display:flex;align-items:center;justify-content:center;
+    font-family:var(--serif);font-weight:300;
+    font-size:clamp(40px,8vw,110px);letter-spacing:.22em;
+    color:var(--cream);text-transform:uppercase;
+    text-shadow:0 4px 30px rgba(0,0,0,.4);
+    border-bottom:1px solid rgba(242,233,222,.1);
+  }
+  .aesthetics .band:last-child{border-bottom:0}
+
+  /* ---------- about ---------- */
+  .about{background:var(--panel);color:var(--panel-ink);border-radius:0 0 60px 60px}
+  .about .wrap{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
+  .about h2{font-family:var(--serif);font-weight:500;font-size:clamp(40px,6vw,66px);letter-spacing:.08em;text-transform:uppercase;margin-bottom:20px}
+  .about p{font-size:16px;line-height:1.8;color:#5a4c42;max-width:46ch}
+  .about .ph{height:380px;border-radius:20px}
+
+  /* ---------- faq ---------- */
+  .faq .wrap{max-width:860px}
+  details{border-bottom:1px solid var(--line);padding:22px 0}
+  summary{
+    list-style:none;cursor:pointer;display:flex;justify-content:space-between;
+    align-items:center;gap:20px;font-family:var(--serif);font-size:22px;
+    font-weight:500;color:var(--cream);
+  }
+  summary::-webkit-details-marker{display:none}
+  summary .plus{color:var(--rose);font-size:24px;transition:transform .3s;flex:none}
+  details[open] summary .plus{transform:rotate(45deg)}
+  details p{color:var(--cream-dim);font-size:15px;margin-top:14px;max-width:64ch}
+
+  /* ---------- contacts ---------- */
+  .contacts .wrap{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
+  .contacts h2{font-family:var(--serif);font-weight:500;font-size:clamp(40px,6vw,60px);letter-spacing:.08em;text-transform:uppercase;margin-bottom:28px}
+  .contacts .info p{margin-bottom:18px;color:var(--cream-dim);font-size:15px;line-height:1.7}
+  .contacts .info strong{color:var(--cream);font-weight:400;display:block;margin-bottom:4px;letter-spacing:.05em}
+  .contacts .ph{height:420px;border-radius:20px}
+
+  /* ---------- footer ---------- */
+  footer{border-top:1px solid var(--line);padding:48px 24px;text-align:center}
+  footer .brand{font-size:34px;margin-bottom:14px}
+  footer p{color:var(--cream-dim);font-size:13px;letter-spacing:.06em}
+
+  /* ---------- responsive ---------- */
+  @media(max-width:860px){
+    .nav{grid-template-columns:auto 1fr auto}
+    .nav-left{display:none}
+    .nav-right .link{display:none}
+    .burger{display:block}
+    .brand{text-align:left;font-size:26px}
+    .cards{grid-template-columns:1fr;gap:36px}
+    .card .ph{height:300px}
+    .about .wrap,.contacts .wrap{grid-template-columns:1fr;gap:32px}
+    .about{border-radius:0 0 40px 40px}
+    .hero-photo{height:64vh}
+    .mobile-menu.open{display:flex}
+  }
+  .mobile-menu{
+    display:none;flex-direction:column;gap:6px;
+    padding:8px 24px 22px;background:var(--bg-2);border-bottom:1px solid var(--line);
+  }
+  .mobile-menu a{padding:12px 0;letter-spacing:.14em;text-transform:lowercase;color:var(--cream-dim);border-bottom:1px solid var(--line)}
+  .mobile-menu a:last-child{border-bottom:0}
+
+  @media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+
+<header>
+  <nav class="nav">
+    <div class="nav-left">
+      <a class="link" href="#catalog">каталог</a>
+      <a class="link" href="#faq">оплата</a>
+    </div>
+    <button class="burger" id="burger" aria-label="Меню" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <a href="#" class="brand">Aurélys</a>
+    <div class="nav-right">
+      <a class="link" href="#contacts">доставка</a>
+      <div class="icons">
+        <a href="#" aria-label="Избранное"><svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-10-9.3C.4 8.6 2 5 5.5 5 8 5 12 8 12 8s4-3 6.5-3C22 5 23.6 8.6 22 11.7 19.5 16.4 12 21 12 21z"/></svg></a>
+        <a href="#" aria-label="Корзина"><svg viewBox="0 0 24 24"><path d="M6 8h12l-1 12H7L6 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg></a>
+      </div>
+    </div>
+  </nav>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#catalog">каталог</a>
+    <a href="#faq">оплата</a>
+    <a href="#contacts">доставка</a>
+    <a href="#about">о нас</a>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero" style="padding-bottom:0">
+  <div class="hero-inner">
+    <div class="hero-photo ph" data-label="фото — букет пионов (заменить)"></div>
+    <div class="hero-overlay">
+      <h1>АУРА</h1>
+      <p class="tagline">красоты в каждом букете</p>
+      <a href="#catalog" class="btn btn-glass">перейти в каталог</a>
+    </div>
+  </div>
+</section>
+
+<!-- ВКУС ЛЕТА -->
+<section id="catalog">
+  <div class="wrap">
+    <h2 class="section-title">Вкус лета</h2>
+    <div class="cards">
+      <article class="card">
+        <div class="ph" data-label="фото — кустовые розы"></div>
+        <h3>Кустовые розы</h3>
+        <p>Лёгкость и элегантность</p>
+        <div class="card-actions">
+          <a href="#" class="btn btn-outline">Подробнее</a>
+          <a href="#" class="btn btn-solid">Заказать</a>
+        </div>
+      </article>
+      <article class="card">
+        <div class="ph" data-label="фото — пионы"></div>
+        <h3>Пионы</h3>
+        <p>Роскошь в каждом бутоне</p>
+        <div class="card-actions">
+          <a href="#" class="btn btn-outline">Подробнее</a>
+          <a href="#" class="btn btn-solid">Заказать</a>
+        </div>
+      </article>
+      <article class="card">
+        <div class="ph" data-label="фото — авторский букет"></div>
+        <h3>Aurélys Art</h3>
+        <p>Уникальный букет от мастера</p>
+        <div class="card-actions">
+          <a href="#" class="btn btn-outline">Подробнее</a>
+          <a href="#" class="btn btn-solid">Заказать</a>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ЭСТЕТИКА / КАЧЕСТВО / ПРЕВОСХОДСТВО -->
+<section class="aesthetics" style="padding:0">
+  <div class="band">Эстетика</div>
+  <div class="band">Качество</div>
+  <div class="band">Превосходство</div>
+</section>
+
+<!-- О НАС -->
+<section class="about" id="about">
+  <div class="wrap">
+    <div>
+      <h2>О нас</h2>
+      <p>Aurélys — мир изысканных цветов, где каждый букет создаётся с душой и чувством стиля. Мы дарим гармонию, нежность и вдохновение в каждом букете, превращая цветы в настоящее искусство.</p>
+    </div>
+    <div class="ph" data-label="фото — мастерская / витрина"></div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq" id="faq">
+  <div class="wrap">
+    <h2 class="section-title" style="font-size:clamp(34px,5vw,56px)">Частые вопросы</h2>
+    <details open>
+      <summary>Как оформить заказ?<span class="plus">+</span></summary>
+      <p>Вы можете выбрать букет на сайте и оформить заказ онлайн. Наши флористы подтвердят композицию вручную и доставят её в удобное для вас время.</p>
+    </details>
+    <details>
+      <summary>Можно ли сделать индивидуальный букет?<span class="plus">+</span></summary>
+      <p>Да, у нас есть услуга «Авторский букет», где каждый цветок подбирается под ваши пожелания и настроение.</p>
+    </details>
+    <details>
+      <summary>Как осуществляется доставка?<span class="plus">+</span></summary>
+      <p>Доставка возможна по городу и в ближайшие районы. Мы гарантируем свежесть цветов и аккуратное оформление каждого букета.</p>
+    </details>
+    <details>
+      <summary>Как ухаживать за цветами?<span class="plus">+</span></summary>
+      <p>Каждый букет сопровождается рекомендациями по уходу, чтобы цветы радовали вас как можно дольше.</p>
+    </details>
+    <details>
+      <summary>Можно ли заказать корпоративные букеты или подарки?<span class="plus">+</span></summary>
+      <p>Конечно! Мы создаём корпоративные композиции, флористические подарки и оформление мероприятий под ваш стиль и бренд.</p>
+    </details>
+  </div>
+</section>
+
+<!-- КОНТАКТЫ -->
+<section class="contacts" id="contacts">
+  <div class="wrap">
+    <div class="info">
+      <h2>Контакты</h2>
+      <p><strong>Адрес</strong>г. Красногорск, проспект Ленина, 14</p>
+      <p><strong>Телефон</strong>+7 (999) 145-77-77</p>
+      <p><strong>Часы работы</strong>Пн–Пт: 10:00 – 20:00<br>Сб–Вс: 11:00 – 18:00</p>
+    </div>
+    <div class="ph" data-label="фото — витрина с цветами"></div>
+  </div>
+</section>
+
+<footer>
+  <div class="brand">Aurélys</div>
+  <p>© 2026 Aurélys. Красота в каждом букете.</p>
+</footer>
+
+<script>
+  const burger = document.getElementById('burger');
+  const menu = document.getElementById('mobileMenu');
+  burger.addEventListener('click', () => {
+    const open = menu.classList.toggle('open');
+    burger.setAttribute('aria-expanded', open);
+  });
+  menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    menu.classList.remove('open');
+    burger.setAttribute('aria-expanded', false);
+  }));
+</script>
+</body>
+</html>
