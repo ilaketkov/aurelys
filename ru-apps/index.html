@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ярлык</title>
+<meta name="description" content="Как вернуть на iPhone Сбер, Т-Банк, Альфу, ВТБ, MAX, VK и Почту Mail.ru без App Store. Только официальные способы.">
+<meta name="theme-color" content="#eceff5" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0f1218" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Ярлык">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&family=Unbounded:wght@500;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one phone-width column — header, search, home-screen grid of app tiles, then guides; tapping a tile opens a bottom sheet with ranked install methods. */
+:root{
+  --bg:#eceff5;
+  --surface:#ffffff;
+  --ink:#141821;
+  --ink-2:#555d6e;
+  --line:#d6dbe5;
+  --accent:#2742d6;
+  --accent-ink:#ffffff;
+  --accent-soft:#e1e6fb;
+  --ok:#1d7a4a;      --ok-soft:#dcf0e4;
+  --warn:#8a5a00;    --warn-soft:#f8ebcc;
+  --bad:#b3261e;     --bad-soft:#f9dedb;
+  --scrim:rgba(14,17,24,.42);
+  --shadow:0 18px 50px rgba(20,24,33,.18);
+  --display:"Unbounded","Golos Text",system-ui,sans-serif;
+  --body:"Golos Text",-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  --r:18px;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f1218; --surface:#191d26; --ink:#eef1f7; --ink-2:#9aa3b5; --line:#2a303c;
+    --accent:#7d93ff; --accent-ink:#0f1218; --accent-soft:#1f2747;
+    --ok:#6fd39c; --ok-soft:#173326; --warn:#f0c062; --warn-soft:#352a12; --bad:#ff8f86; --bad-soft:#3a1b19;
+    --scrim:rgba(0,0,0,.6); --shadow:0 18px 50px rgba(0,0,0,.5);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f1218; --surface:#191d26; --ink:#eef1f7; --ink-2:#9aa3b5; --line:#2a303c;
+  --accent:#7d93ff; --accent-ink:#0f1218; --accent-soft:#1f2747;
+  --ok:#6fd39c; --ok-soft:#173326; --warn:#f0c062; --warn-soft:#352a12; --bad:#ff8f86; --bad-soft:#3a1b19;
+  --scrim:rgba(0,0,0,.6); --shadow:0 18px 50px rgba(0,0,0,.5);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 var(--body);-webkit-font-smoothing:antialiased}
+a{color:var(--accent)}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:720px;margin:0 auto;padding-inline:16px;padding-block:16px 48px;display:flex;flex-direction:column;gap:28px}
+
+/* header */
+.top{display:flex;flex-direction:column;gap:10px;padding-top:12px}
+.brand{display:flex;align-items:center;gap:12px}
+.brand-mark{width:44px;height:44px;border-radius:12px;background:var(--accent);display:grid;place-items:center;flex:none}
+.brand-mark svg{width:24px;height:24px}
+h1{font:700 30px/1 var(--display);margin:0;letter-spacing:-.01em}
+.lede{margin:0;color:var(--ink-2);max-width:56ch;text-wrap:pretty}
+.stamp{font:500 12px/1 var(--mono);color:var(--ink-2);letter-spacing:.02em}
+
+/* search + chips */
+.controls{display:flex;flex-direction:column;gap:12px;position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:8px}
+.search{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:0 14px}
+.search svg{width:18px;height:18px;flex:none;color:var(--ink-2)}
+.search input{flex:1;min-width:0;border:0;background:transparent;font:inherit;color:var(--ink);padding:12px 0;outline:none}
+.chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin-inline:-16px;padding-inline:16px}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:7px 14px;font-size:14px;cursor:pointer;white-space:nowrap}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+
+/* home-screen grid */
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:22px 12px}
+@media (min-width:560px){.grid{grid-template-columns:repeat(5,minmax(0,1fr))}}
+.tile{display:flex;flex-direction:column;align-items:center;gap:7px;background:none;border:0;padding:0;cursor:pointer;text-align:center;min-width:0}
+.icon{position:relative;width:64px;height:64px;max-width:100%;border-radius:15px;display:grid;place-items:center;font:700 19px/1 var(--display);color:#fff;letter-spacing:-.02em;box-shadow:inset 0 0 0 1px rgba(255,255,255,.12);transition:transform .15s}
+.tile:active .icon{transform:scale(.93)}
+.icon .dot{position:absolute;top:-5px;right:-5px;width:20px;height:20px;border-radius:50%;border:3px solid var(--bg)}
+.dot.web{background:var(--ok)} .dot.pc{background:var(--warn)} .dot.off{background:var(--bad)}
+.tile-name{font-size:12.5px;line-height:1.25;max-width:100%;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.fav-star{position:absolute;bottom:-4px;left:-4px;width:20px;height:20px;border-radius:50%;background:var(--surface);color:var(--warn);font-size:12px;display:grid;place-items:center;border:1px solid var(--line)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--ink-2)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:10px;height:10px;border-radius:50%;display:inline-block}
+.empty{color:var(--ink-2);text-align:center;padding:24px 0;grid-column:1/-1}
+
+/* sections */
+section h2{font:500 19px/1.25 var(--display);margin:0 0 12px;text-wrap:balance}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px}
+.steps{margin:0;padding:0;list-style:none;counter-reset:s;display:flex;flex-direction:column;gap:12px}
+.steps li{counter-increment:s;display:grid;grid-template-columns:28px 1fr;gap:10px;align-items:start}
+.steps li::before{content:counter(s);width:28px;height:28px;border-radius:50%;background:var(--accent-soft);color:var(--accent);font:600 14px/28px var(--mono);text-align:center}
+.steps li > div{min-width:0}
+.kbd{font:500 .92em var(--mono);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:1px 6px;white-space:nowrap}
+.note{font-size:14px;color:var(--ink-2);margin:12px 0 0}
+.donts{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.donts li{display:grid;grid-template-columns:22px 1fr;gap:8px}
+.donts li::before{content:"✕";color:var(--bad);font-weight:600}
+.why p{margin:0 0 10px;max-width:62ch}
+.why p:last-child{margin:0}
+footer{font-size:13px;color:var(--ink-2);display:flex;flex-direction:column;gap:6px}
+
+/* sheet */
+.scrim{position:fixed;inset:0;background:var(--scrim);z-index:20;opacity:0;transition:opacity .2s}
+.scrim.on{opacity:1}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:21;background:var(--surface);border-radius:24px 24px 0 0;box-shadow:var(--shadow);max-height:88%;overflow-y:auto;overscroll-behavior:contain;padding:10px 16px calc(24px + env(safe-area-inset-bottom,0px));transform:translateY(100%);transition:transform .26s cubic-bezier(.2,.8,.2,1)}
+.sheet.on{transform:none}
+@media (min-width:760px){.sheet{left:50%;right:auto;width:680px;margin-left:-340px}}
+.grab{width:40px;height:5px;border-radius:3px;background:var(--line);margin:0 auto 12px}
+.sheet-in{display:flex;flex-direction:column;gap:18px;max-width:640px;margin:0 auto}
+.sh-head{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center}
+.sh-head > div{min-width:0}
+.sh-head h3{font:600 20px/1.2 var(--display);margin:0}
+.sh-dev{font-size:13px;color:var(--ink-2)}
+.iconbtn{width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:var(--bg);display:grid;place-items:center;cursor:pointer;font-size:16px}
+.iconbtn[aria-pressed="true"]{color:var(--warn)}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:500;border-radius:999px;padding:4px 10px}
+.pill.bad{background:var(--bad-soft);color:var(--bad)} .pill.ok{background:var(--ok-soft);color:var(--ok)} .pill.warn{background:var(--warn-soft);color:var(--warn)}
+.status-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.status-row p{margin:0;font-size:14px;color:var(--ink-2);flex-basis:100%}
+.actions{display:flex;flex-wrap:wrap;gap:8px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:12px;padding:11px 16px;font-weight:500;font-size:15px;text-decoration:none;cursor:pointer;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.url{font:500 13px var(--mono);color:var(--ink-2);word-break:break-all}
+.methods{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.m{border:1px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:6px}
+.m.best{border-color:var(--accent);background:var(--accent-soft)}
+.m-top{display:flex;justify-content:space-between;gap:10px;align-items:baseline;flex-wrap:wrap}
+.m-title{font-weight:600}
+.m-tag{font:500 11px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2)}
+.m.best .m-tag{color:var(--accent)}
+.m p{margin:0;font-size:14.5px;color:var(--ink-2)}
+.m p strong{color:var(--ink);font-weight:500}
+.m a{font-size:14.5px}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;font-size:14px;z-index:40;opacity:0;pointer-events:none;transition:.2s}
+.toast.on{opacity:1;transform:translateX(-50%)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><path d="M12 7.5v8M8.5 12l3.5 3.5 3.5-3.5"/></svg>
+      </div>
+      <h1>Ярлык</h1>
+    </div>
+    <p class="lede">Сбер, Т-Банк, Альфа, ВТБ, MAX, VK и Почта Mail.ru на iPhone без App Store. Для каждого приложения собраны только официальные способы: веб-версия на экран «Домой», утилиты банков, офис и курьер.</p>
+    <span class="stamp">данные проверены 12.10.2026</span>
+  </header>
+
+  <div class="controls">
+    <label class="search" for="q">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="q" type="search" placeholder="Сбер, MAX, почта…" autocomplete="off" enterkeyhint="search">
+    </label>
+    <div class="chips" id="chips" role="toolbar" aria-label="Категории"></div>
+  </div>
+
+  <section aria-label="Приложения">
+    <div class="grid" id="grid"></div>
+    <div class="legend" style="margin-top:18px">
+      <span><i style="background:var(--ok)"></i>есть веб-версия</span>
+      <span><i style="background:var(--warn)"></i>нужен компьютер или офис</span>
+      <span><i style="background:var(--bad)"></i>только офис</span>
+    </div>
+  </section>
+
+  <section id="home">
+    <h2>Как добавить сайт на экран «Домой»</h2>
+    <div class="panel">
+      <ol class="steps">
+        <li><div>Откройте веб-версию <strong>в Safari</strong>. В Chrome и других браузерах на iPhone ярлык тоже создаётся, но уведомления надёжнее работают из Safari.</div></li>
+        <li><div>Нажмите <span class="kbd">Поделиться</span> (квадрат со стрелкой). В iOS 26 он спрятан под <span class="kbd">•••</span> внизу справа.</div></li>
+        <li><div>Пролистайте вниз и выберите <span class="kbd">На экран «Домой»</span>.</div></li>
+        <li><div>Оставьте включённым <span class="kbd">Открыть как веб-приложение</span> и нажмите <span class="kbd">Добавить</span>.</div></li>
+        <li><div>Запустите сайт с новой иконки и войдите. Когда сайт спросит про уведомления, разрешите их.</div></li>
+      </ol>
+      <p class="note">Уведомления от веб-приложений работают на iOS 16.4 и новее, и только если сайт открыт с иконки на экране «Домой».</p>
+    </div>
+  </section>
+
+  <section id="purchases">
+    <h2>Если приложение уже было на вашем Apple ID</h2>
+    <div class="panel">
+      <ol class="steps">
+        <li><div>App Store → фото профиля справа вверху → <span class="kbd">Покупки</span> → <span class="kbd">Мои покупки</span>.</div></li>
+        <li><div>Найдите приложение и нажмите облако со стрелкой. Если строки нет, Apple скрыла её для удалённых приложений.</div></li>
+        <li><div>Тогда используйте утилиту банка с компьютера: «Верни Сбер на iPhone» или T-Mazing. Они скачивают приложение из истории покупок вашего Apple ID. Для остальных приложений подходит iMazing с сайта imazing.com.</div></li>
+      </ol>
+      <p class="note">Не удаляйте уже установленные приложения. После удаления из App Store они продолжают работать, а поставить их заново будет сложнее.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Чего не делать</h2>
+    <div class="panel">
+      <ul class="donts">
+        <li><div>Не скачивайте IPA-файлы банков из Telegram-каналов и с «зеркал». Модифицированное банковское приложение крадёт коды и деньги.</div></li>
+        <li><div>Не устанавливайте профили конфигурации и «сертификаты разработчика» с чужих сайтов.</div></li>
+        <li><div>Не входите в чужой Apple ID, кроме временной учётки, которую выдал чат поддержки самого банка.</div></li>
+        <li><div>Не платите за «установку Сбера» сторонним сервисам. Банки ставят приложения бесплатно в офисе и через курьера.</div></li>
+        <li><div>Скачивайте утилиты банков только с их сайтов. Банки не рассылают ссылки на них в мессенджерах.</div></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="why">
+    <h2>Почему здесь нет кнопки «Скачать IPA»</h2>
+    <div class="panel">
+      <p>iOS ставит приложения только из App Store. Альтернативные магазины Apple разрешила лишь в Евросоюзе, и они требуют европейский Apple ID. Сторонние «магазины» в России работают на корпоративных сертификатах: Apple отзывает их, и все приложения перестают запускаться.</p>
+      <p>Раздача чужих банковских приложений нарушает права банков, а пользователь не может проверить, что сборку никто не изменил. Поэтому Ярлык ведёт только на сайты самих компаний.</p>
+    </div>
+  </section>
+
+  <footer>
+    <span>Ярлык не связан с банками и VK. Названия принадлежат их владельцам.</span>
+    <span>Способы меняются. Если что-то перестало работать, уточните в поддержке банка.</span>
+  </footer>
+</div>
+
+<div class="scrim" id="scrim" hidden></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sh-title" hidden>
+  <div class="grab"></div>
+  <div class="sheet-in" id="sheet-in"></div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const CATS=[["all","Все"],["fav","★ Мои"],["bank","Банки"],["social","Соцсети"],["mail","Почта"],["media","Видео и музыка"]];
+
+// avail: web = есть веб-версия; pc = нужна утилита или офис; off = только офис
+const APPS=[
+ {id:"sber",name:"СберБанк Онлайн",short:"Сбер",dev:"Сбербанк",cat:"bank",hue:"#1f8f4e",mono:"Сб",avail:"web",
+  status:["bad","Удалено из App Store в 2022"],
+  note:"Вместе с ним недоступны СберИнвестор, СберKids и СберБизнес.",
+  web:"https://online.sberbank.ru",site:"https://www.sberbank.ru",
+  methods:[
+   {t:"Верни Сбер на iPhone",tag:"компьютер",best:1,d:"Официальная программа Сбера для Windows. Скачивает СберБанк Онлайн, СберИнвестор, СберKids и СберБизнес из истории покупок вашего Apple ID. Нужны iTunes, кабель, iOS 14+ и 2 ГБ свободного места. Работает, только если приложение уже когда-то ставилось на этот Apple ID.",link:["Найти программу на sberbank.ru","https://www.sberbank.ru"]},
+   {t:"Отделение банка",tag:"первая установка",d:"Сотрудник бесплатно установит приложение на ваш iPhone. Возьмите паспорт и телефон. Это единственный способ, если вы никогда не скачивали Сбер на свой Apple ID."},
+   {t:"Веб-версия",tag:"без установки",d:"СберБанк Онлайн в браузере. Добавьте на экран «Домой», и он откроется как отдельное приложение."}
+  ]},
+ {id:"tbank",name:"Т-Банк",short:"Т-Банк",dev:"Т-Банк (Тинькофф)",cat:"bank",hue:"#2b2b2b",mono:"Т",avail:"web",
+  status:["bad","Удалено из App Store"],
+  note:"Банк меняет доступные способы. Актуальный подскажет чат поддержки в веб-версии.",
+  web:"https://www.tbank.ru/mybank/",site:"https://www.tbank.ru",
+  methods:[
+   {t:"Временный Apple ID от поддержки",tag:"без компьютера",best:1,d:"Напишите в чат поддержки Т-Банка. Банк выдаёт временную учётную запись, под которой приложение скачивается из App Store. После установки выйдите из неё и вернитесь в свой Apple ID.",link:["Инструкция на tbank.ru","https://www.tbank.ru/bank/help/interfaces/bank-app/get/app-store/"]},
+   {t:"T-Mazing",tag:"компьютер",d:"Программа банка для Windows и macOS. Восстанавливает приложения Т-Банка по кабелю. Скачивайте только с сайта tbank.ru: ссылка появляется в личном кабинете, если способ вам доступен."},
+   {t:"Курьер",tag:"при выдаче карты",d:"Попросите курьера установить приложение, когда он привезёт карту."},
+   {t:"Мобильная версия личного кабинета",tag:"без установки",d:"На iOS 17 и новее работает почти как приложение. Добавьте на экран «Домой»."}
+  ]},
+ {id:"alfa",name:"Альфа-Банк",short:"Альфа",dev:"Альфа-Банк",cat:"bank",hue:"#d8261c",mono:"А",avail:"web",
+  status:["bad","Удалено из App Store в 2022"],
+  note:"Альфа иногда публикует приложение в App Store под другим названием. Доверяйте только ссылке с alfabank.ru.",
+  web:"https://web.alfabank.ru",site:"https://alfabank.ru",
+  methods:[
+   {t:"Отделение или курьер",tag:"бесплатно",best:1,d:"Сотрудник установит приложение на iPhone. Возьмите паспорт и карту. Push-уведомления в такой версии могут не работать."},
+   {t:"Новое приложение в App Store",tag:"проверяйте",d:"Если банк выпустил приложение под новым названием, ссылка будет на сайте alfabank.ru. Копии в App Store от других разработчиков ставить нельзя."},
+   {t:"Веб-версия Альфа-Онлайн",tag:"без установки",d:"Переводы, платежи и выписки в браузере. Добавьте на экран «Домой»."}
+  ]},
+ {id:"vtb",name:"ВТБ Онлайн",short:"ВТБ",dev:"ВТБ",cat:"bank",hue:"#0a2896",mono:"ВТБ",avail:"web",
+  status:["bad","Удалено из App Store в 2022"],
+  web:"https://online.vtb.ru",site:"https://www.vtb.ru",
+  methods:[
+   {t:"Веб-версия",tag:"без установки",best:1,d:"По функциям почти как приложение: переводы, платежи, баланс. Добавьте на экран «Домой». Если сайт открывается с ошибкой сертификата, попробуйте Яндекс Браузер."},
+   {t:"Отделение или курьер",tag:"бесплатно",d:"Сотрудник установит приложение на ваш iPhone."}
+  ]},
+ {id:"gpb",name:"Газпромбанк",short:"Газпромбанк",dev:"Газпромбанк",cat:"bank",hue:"#0d5aa7",mono:"Г",avail:"pc",
+  status:["bad","Удалено из App Store"],
+  web:null,site:"https://www.gazprombank.ru",
+  methods:[
+   {t:"Отделение банка",tag:"бесплатно",best:1,d:"Уточните в отделении, ставят ли они приложение на iPhone."},
+   {t:"Личный кабинет на сайте",tag:"без установки",d:"Вход есть на gazprombank.ru. На телефоне он менее удобен, чем приложение, но основные операции доступны."}
+  ]},
+ {id:"max",name:"MAX",short:"MAX",dev:"VK",cat:"social",hue:"#6b3cf0",mono:"M",avail:"web",
+  status:["bad","Удалено из App Store 3 июня 2026"],
+  note:"Уже установленный MAX работает, но уведомления в нём пропали: Apple отзывает токен уведомлений у удалённых приложений. Не удаляйте его.",
+  web:"https://web.max.ru",site:"https://max.ru",
+  methods:[
+   {t:"Веб-версия на экране «Домой»",tag:"с уведомлениями",best:1,d:"Откройте web.max.ru в Safari и добавьте на экран «Домой». Так вернутся уведомления о сообщениях (iOS 16.4+). Войдите по номеру телефона."},
+   {t:"Восстановление из «Покупок»",tag:"если ставили раньше",d:"Через App Store → Покупки или iMazing с компьютера."}
+  ]},
+ {id:"vk",name:"ВКонтакте",short:"ВКонтакте",dev:"VK",cat:"social",hue:"#0077ff",mono:"VK",avail:"web",
+  status:["bad","Удалено из App Store в июне 2026"],
+  note:"Установленное приложение продолжает работать без уведомлений.",
+  web:"https://vk.com",site:"https://vk.com",
+  methods:[
+   {t:"Веб-версия",tag:"без установки",best:1,d:"Мобильная версия vk.com на экране «Домой». Лента, сообщения, музыка и клипы."},
+   {t:"Восстановление из «Покупок»",tag:"если ставили раньше",d:"Через App Store → Покупки или iMazing с компьютера."}
+  ]},
+ {id:"vkm",name:"VK Мессенджер",short:"VK Мессенджер",dev:"VK",cat:"social",hue:"#2a5bd7",mono:"VKм",avail:"web",
+  status:["bad","Удалено из App Store в июне 2026"],
+  web:"https://web.vk.me",site:"https://vk.me",
+  methods:[
+   {t:"Веб-версия",tag:"без установки",best:1,d:"Чаты ВКонтакте в браузере. Добавьте на экран «Домой»."},
+   {t:"Сообщения в vk.com",tag:"альтернатива",d:"Те же переписки есть в веб-версии ВКонтакте."}
+  ]},
+ {id:"ok",name:"Одноклассники",short:"ОК",dev:"VK",cat:"social",hue:"#ee8208",mono:"ОК",avail:"web",
+  status:["bad","Удалено из App Store в июне 2026"],
+  web:"https://ok.ru",site:"https://ok.ru",
+  methods:[{t:"Веб-версия",tag:"без установки",best:1,d:"Мобильная версия ok.ru на экране «Домой»."},{t:"Восстановление из «Покупок»",tag:"если ставили раньше",d:"Через App Store → Покупки или iMazing с компьютера."}]},
+ {id:"dzen",name:"Дзен",short:"Дзен",dev:"VK",cat:"media",hue:"#1a1a1a",mono:"Дз",avail:"web",
+  status:["bad","Удалено из App Store в июне 2026"],
+  web:"https://dzen.ru",site:"https://dzen.ru",
+  methods:[{t:"Веб-версия",tag:"без установки",best:1,d:"Статьи и видео Дзена в браузере. Добавьте на экран «Домой»."}]},
+ {id:"vkvideo",name:"VK Видео",short:"VK Видео",dev:"VK",cat:"media",hue:"#e0245e",mono:"▶",avail:"web",
+  status:["bad","Удалено из App Store в июне 2026"],
+  web:"https://vkvideo.ru",site:"https://vkvideo.ru",
+  methods:[{t:"Веб-версия",tag:"без установки",best:1,d:"vkvideo.ru открывается в Safari и на экране «Домой». Видео играет и в полноэкранном режиме."}]},
+ {id:"vkmusic",name:"VK Музыка",short:"VK Музыка",dev:"VK",cat:"media",hue:"#c4127d",mono:"♪",avail:"web",
+  status:["bad","Удалено из App Store в июне 2026"],
+  note:"В веб-версии музыка может останавливаться при блокировке экрана.",
+  web:"https://vk.com/audio",site:"https://vk.com",
+  methods:[{t:"Музыка в веб-версии ВКонтакте",tag:"без установки",best:1,d:"Раздел «Музыка» на vk.com. Подписка VK Музыка действует и там."},{t:"Восстановление из «Покупок»",tag:"если ставили раньше",d:"Через App Store → Покупки или iMazing с компьютера."}]},
+ {id:"mailru",name:"Почта Mail.ru",short:"Почта Mail",dev:"VK",cat:"mail",hue:"#005ff9",mono:"@",avail:"web",
+  status:["bad","Удалено из App Store в июне 2026"],
+  web:"https://e.mail.ru",site:"https://mail.ru",
+  methods:[
+   {t:"Встроенная «Почта» iPhone",tag:"с уведомлениями",best:1,d:"<strong>Настройки → Приложения → Почта → Учётные записи → Новая → Другое.</strong> Входящая почта: <span class=\"kbd\">imap.mail.ru</span>, исходящая: <span class=\"kbd\">smtp.mail.ru</span>. Вместо обычного пароля нужен пароль для внешнего приложения: создайте его в настройках безопасности почты на сайте."},
+   {t:"Веб-версия",tag:"без установки",d:"e.mail.ru на экране «Домой»."}
+  ]}
+];
+
+const LS="yarlyk.favs";
+let favs=new Set();
+try{favs=new Set(JSON.parse(localStorage.getItem(LS)||"[]"))}catch(e){}
+function saveFavs(){try{localStorage.setItem(LS,JSON.stringify([...favs]))}catch(e){}}
+let cat="all";
+try{cat=localStorage.getItem("yarlyk.cat")||"all"}catch(e){}
+if(!CATS.some(c=>c[0]===cat))cat="all";
+
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));
+
+function renderChips(){
+  $("#chips").innerHTML=CATS.map(([k,l])=>`<button class="chip" data-k="${k}" aria-pressed="${k===cat}">${l}</button>`).join("");
+}
+function renderGrid(){
+  const q=$("#q").value.trim().toLowerCase();
+  const list=APPS.filter(a=>{
+    if(cat==="fav"&&!favs.has(a.id))return false;
+    if(cat!=="all"&&cat!=="fav"&&a.cat!==cat)return false;
+    if(q&&!(a.name+" "+a.short+" "+a.dev).toLowerCase().includes(q))return false;
+    return true;
+  });
+  $("#grid").innerHTML=list.length?list.map(a=>`
+    <button class="tile" data-id="${a.id}" aria-label="${esc(a.name)}">
+      <span class="icon" style="background:${a.hue}">${esc(a.mono)}<span class="dot ${a.avail}"></span>${favs.has(a.id)?'<span class="fav-star">★</span>':""}</span>
+      <span class="tile-name">${esc(a.short)}</span>
+    </button>`).join(""):`<p class="empty">${cat==="fav"?"Отметьте звёздочкой приложения, которыми пользуетесь, и они появятся здесь.":"Ничего не найдено. Попробуйте другое название."}</p>`;
+}
+
+let lastFocus=null;
+function openSheet(id){
+  const a=APPS.find(x=>x.id===id); if(!a)return;
+  lastFocus=document.activeElement;
+  const host=a.web?a.web.replace(/^https:\/\//,"").replace(/\/$/,""):"";
+  $("#sheet-in").innerHTML=`
+    <div class="sh-head">
+      <span class="icon" style="background:${a.hue};width:56px;height:56px;border-radius:13px;font-size:17px">${esc(a.mono)}</span>
+      <div><h3 id="sh-title">${esc(a.name)}</h3><div class="sh-dev">${esc(a.dev)}</div></div>
+      <div style="display:flex;gap:8px">
+        <button class="iconbtn" id="fav" aria-pressed="${favs.has(a.id)}" aria-label="В мои">${favs.has(a.id)?"★":"☆"}</button>
+        <button class="iconbtn" id="close" aria-label="Закрыть">✕</button>
+      </div>
+    </div>
+    <div class="status-row">
+      <span class="pill ${a.status[0]}">● ${esc(a.status[1])}</span>
+      ${a.web?'<span class="pill ok">● Веб-версия работает</span>':""}
+      ${a.note?`<p>${esc(a.note)}</p>`:""}
+    </div>
+    ${a.web?`<div style="display:flex;flex-direction:column;gap:8px">
+      <div class="actions">
+        <a class="btn primary" href="${a.web}" target="_blank" rel="noopener">Открыть веб-версию</a>
+        <button class="btn" id="copy" data-url="${a.web}">Скопировать адрес</button>
+      </div>
+      <span class="url">${esc(host)}</span>
+    </div>`:`<div class="actions"><a class="btn primary" href="${a.site}" target="_blank" rel="noopener">Официальный сайт</a></div>`}
+    <div>
+      <h2 style="font:500 16px/1.3 var(--display);margin:0 0 10px">Способы установки</h2>
+      <ol class="methods">${a.methods.map(m=>`
+        <li class="m${m.best?" best":""}">
+          <div class="m-top"><span class="m-title">${esc(m.t)}</span><span class="m-tag">${m.best?"лучший сейчас · ":""}${esc(m.tag)}</span></div>
+          <p>${m.d}</p>
+          ${m.link?`<a href="${m.link[1]}" target="_blank" rel="noopener">${esc(m.link[0])} ↗</a>`:""}
+        </li>`).join("")}
+      </ol>
+    </div>
+    ${a.web?'<a href="#home" class="btn" id="howto">Как добавить на экран «Домой»</a>':""}
+    <a class="url" href="${a.site}" target="_blank" rel="noopener">Официальный сайт: ${esc(a.site.replace(/^https:\/\//,""))} ↗</a>`;
+  const s=$("#sheet"),sc=$("#scrim");
+  s.hidden=false;sc.hidden=false;s.scrollTop=0;
+  requestAnimationFrame(()=>{s.classList.add("on");sc.classList.add("on")});
+  document.body.style.overflow="hidden";
+  $("#close").focus();
+  $("#close").onclick=closeSheet;
+  $("#fav").onclick=e=>{favs.has(a.id)?favs.delete(a.id):favs.add(a.id);saveFavs();e.currentTarget.setAttribute("aria-pressed",favs.has(a.id));e.currentTarget.textContent=favs.has(a.id)?"★":"☆";renderGrid();toast(favs.has(a.id)?"Добавлено в «Мои»":"Убрано из «Моих»")};
+  const c=$("#copy"); if(c)c.onclick=()=>copy(c.dataset.url);
+  const h=$("#howto"); if(h)h.onclick=e=>{e.preventDefault();closeSheet();setTimeout(()=>$("#home").scrollIntoView({behavior:"smooth"}),250)};
+}
+function closeSheet(){
+  const s=$("#sheet"),sc=$("#scrim");
+  s.classList.remove("on");sc.classList.remove("on");
+  document.body.style.overflow="";
+  setTimeout(()=>{s.hidden=true;sc.hidden=true},260);
+  if(lastFocus)lastFocus.focus();
+}
+function copy(text){
+  const done=()=>toast("Адрес скопирован");
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(done,()=>fallback());
+  }else fallback();
+  function fallback(){const u=document.querySelector(".sheet .url");if(u){const r=document.createRange();r.selectNodeContents(u);const sel=getSelection();sel.removeAllRanges();sel.addRange(r);toast("Адрес выделен, скопируйте его")}}
+}
+let tt;
+function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("on");clearTimeout(tt);tt=setTimeout(()=>t.classList.remove("on"),1800)}
+
+$("#chips").addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;cat=b.dataset.k;try{localStorage.setItem("yarlyk.cat",cat)}catch(e){}renderChips();renderGrid()});
+$("#grid").addEventListener("click",e=>{const t=e.target.closest(".tile");if(t)openSheet(t.dataset.id)});
+$("#q").addEventListener("input",renderGrid);
+$("#scrim").addEventListener("click",closeSheet);
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("#sheet").hidden)closeSheet()});
+
+renderChips();renderGrid();
+
+if("serviceWorker" in navigator&&location.protocol==="https:"){
+  navigator.serviceWorker.register("sw.js").catch(()=>{});
+}
+</script>
+</body>
+</html>
