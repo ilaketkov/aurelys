@@ -1,0 +1,54 @@
+name: iOS-приложение
+
+on:
+  push:
+    paths: ["ios/**", ".github/workflows/ios.yml"]
+  pull_request:
+    paths: ["ios/**", ".github/workflows/ios.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Сгенерировать проект Xcode
+        run: |
+          brew install xcodegen
+          cd ios && xcodegen generate
+
+      - name: Собрать без подписи
+        run: |
+          cd ios
+          xcodebuild -project Vernut.xcodeproj -target Vernut \
+            -configuration Release -sdk iphoneos \
+            SYMROOT="$PWD/build" \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" \
+            build
+
+      - name: Упаковать .ipa
+        run: |
+          cd ios
+          mkdir -p Payload
+          cp -R build/Release-iphoneos/Vernut.app Payload/
+          zip -qry Vernut.ipa Payload
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Vernut-ipa
+          path: ios/Vernut.ipa
+
+      - name: Обновить релиз «latest»
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release delete latest --yes --cleanup-tag || true
+          gh release create latest ios/Vernut.ipa \
+            --target "$GITHUB_SHA" \
+            --title "Вернуть — последняя сборка" \
+            --notes "Неподписанный Vernut.ipa. Установка через Sideloadly со своим Apple ID: см. ios/README.md."

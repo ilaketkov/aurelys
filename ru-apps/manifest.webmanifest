@@ -1,6 +1,6 @@
 {
-  "name": "Ярлык",
-  "short_name": "Ярлык",
+  "name": "Вернуть",
+  "short_name": "Вернуть",
   "description": "Официальные способы вернуть на iPhone российские приложения, удалённые из App Store.",
   "lang": "ru",
   "start_url": "./",

@@ -1,5 +1,5 @@
 // Кэширует оболочку приложения, чтобы инструкции открывались без интернета.
-const CACHE = "yarlyk-v1";
+const CACHE = "vernut-v2";
 const ASSETS = ["./", "index.html", "manifest.webmanifest", "icon-192.png", "icon-512.png", "apple-touch-icon.png"];
 
 self.addEventListener("install", e => {
